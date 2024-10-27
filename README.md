@@ -7,15 +7,15 @@
 Just click and copy:
 
 ```bash
-rm -rf "${HOME}/.config/mendokusai"
-mkdir -p "${HOME}/.config/mendokusai"
-git clone --bare git@github.com:Alimektor/mendokusai.git "${HOME}/.config/mendokusai/git"
-alias mendo='/usr/bin/git --git-dir=$HOME/.config/mendokusai/git --work-tree=$HOME'
-mendo checkout
-mendo config --local status.showUntrackedFiles no
-mendo config --local core.filemode true
-mendo config --local push.default current
-echo '[[ -r "${HOME}/.config/mendokusai/mendo.sh" ]] && . "${HOME}/.config/mendokusai/mendo.sh"' >> ${HOME}/.bashrc
+rm -rf "${HOME}/.config/mendokusai" && \
+mkdir -p "${HOME}/.config/mendokusai" && \
+git clone --bare git@github.com:Alimektor/mendokusai.git "${HOME}/.config/mendokusai/git" && \
+alias mendo='/usr/bin/git --git-dir=$HOME/.config/mendokusai/git --work-tree=$HOME' && \
+mendo checkout && \
+mendo config --local status.showUntrackedFiles no && \
+mendo config --local core.filemode true && \
+mendo config --local push.default current && \
+echo '[[ -r "${HOME}/.config/mendokusai/mendo.sh" ]] && . "${HOME}/.config/mendokusai/mendo.sh"' >> ${HOME}/.bashrc && \
 echo '[[ -r "${HOME}/.config/mendokusai/mendo.sh" ]] && . "${HOME}/.config/mendokusai/mendo.sh"' >> ${HOME}/.zshrc
 ```
 
