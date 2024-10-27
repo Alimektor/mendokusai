@@ -14,7 +14,8 @@ mendo checkout
 mendo config --local status.showUntrackedFiles no
 mendo config --local core.filemode true
 mendo config --local push.default current
-echo "alias mendo='/usr/bin/git --git-dir=${HOME}/.config/mendokusai/git --work-tree=${HOME}'" >> $HOME/.bashrc
+echo '[[ -r "${HOME}/.config/mendokusai/mendo.sh" ]] && . "${HOME}/.config/mendokusai/mendo.sh"' >> ${HOME}/.bashrc
+echo '[[ -r "${HOME}/.config/mendokusai/mendo.sh" ]] && . "${HOME}/.config/mendokusai/mendo.sh"' >> ${HOME}/.zshrc
 ```
 
 (Additional) For Windows Git Bash change `core.filemode`:
