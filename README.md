@@ -9,7 +9,7 @@ Just click and copy:
 ```bash
 rm -rf "${HOME}/.config/mendokusai"
 mkdir -p "${HOME}/.config/mendokusai"
-git clone git@github.com:Alimektor/mendokusai.git "${HOME}/.config/mendokusai/git"
+git clone --base git@github.com:Alimektor/mendokusai.git "${HOME}/.config/mendokusai/git"
 alias mendo='/usr/bin/git --git-dir=$HOME/.config/mendokusai/git --work-tree=$HOME'
 mendo checkout
 mendo config --local status.showUntrackedFiles no
