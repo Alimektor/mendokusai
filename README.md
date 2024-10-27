@@ -7,7 +7,8 @@
 Just click and copy:
 
 ```bash
-mkdir -p /home/alimektor/.config/mendokusai
+rm -rf "${HOME}/.config/mendokusai"
+mkdir -p "${HOME}/.config/mendokusai"
 git clone git@github.com:Alimektor/mendokusai.git
 alias mendo='/usr/bin/git --git-dir=$HOME/.config/mendokusai/git --work-tree=$HOME'
 mendo checkout
