@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+# Calculate when it's time to go home.
+# status: final
+
+# Determine script path
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+while [[ -L "${SCRIPT_PATH}" ]]; do
+    SCRIPT_DIR="$(cd -P "$(dirname "${SCRIPT_PATH}")" >/dev/null 2>&1 && pwd)"
+    SCRIPT_PATH="$(readlink "${SCRIPT_PATH}")"
+    [[ ${SCRIPT_PATH} != /* ]] && SCRIPT_PATH="${SCRIPT_DIR}/${SCRIPT_PATH}"
+done
+SCRIPT_PATH="$(readlink -f "${SCRIPT_PATH}")"
+SCRIPT_DIR="$(cd -P "$(dirname -- "${SCRIPT_PATH}")" >/dev/null 2>&1 && pwd)"
+SCRIPT_BASENAME=${SCRIPT_PATH##*/}
+
+print_usage() {
+    cat <<__USAGE__
+Usage: ${SCRIPT_BASENAME} [-v|--version -h|--help -n|--name <name>]
+
+    Calculate when it's time to go home.
+
+    Default: The timer starts with today's computer startup.
+    This behavior controlled by ~/.config/mendokusai/.gtforc:
+
+    start = 08:00   # Argument for \`journalctl --since=\`.
+    work_hours = 12 # Hours in a workday.
+
+Example:
+
+    ${SCRIPT_BASENAME}
+
+Options:
+    --version           Print utility version.
+    --help              Print this help message.
+    --text              Use text output.
+__USAGE__
+}
+
+print_version() {
+    echo "${SCRIPT_BASENAME}, 1.0.5"
+}
+
+print_script_status() {
+    local _script_status
+    _script_status="$(head -n 3 "${SCRIPT_PATH}")"
+    _script_status="$(echo "${_script_status}" | tail -n 1)"
+    # shellcheck disable=SC2001
+    _script_status="$(echo "${_script_status}" | sed 's|^# ||')"
+    echo "${_script_status}"
+}
+
+main() {
+    local text="${1}"
+    # shellcheck disable=SC2312
+    start="$(grep "^start = " "${HOME}/.config/mendokusai/.gtforc" 2>/dev/null | cut -d'=' -f2 | xargs)"
+    # shellcheck disable=SC2312
+    work_hours="$(grep "^work_hours = " "${HOME}/.config/mendokusai/.gtforc" 2>/dev/null | cut -d'=' -f2 | xargs)"
+    # shellcheck disable=SC2155
+    local arrival_time="$(journalctl --since="${start:-today}" | head -1 | awk '{print $3}') $(date +"%Z")"
+    # shellcheck disable=SC2155
+    local gtfo_time="$(date -d "${arrival_time} + ${work_hours:-9} hours" +"%H:%M:%S")"
+    echo "GTFO time: ${gtfo_time}"
+    if ! command -v termdown >/dev/null; then
+        echo "Install termdown! For example: $ pip3 install termdown"
+        exit 1
+    fi
+    if ! command -v zenity >/dev/null; then
+        echo "Install zenity!"
+        exit 1
+    fi
+    if [[ "${text}" == "true" ]]; then
+        termdown "${gtfo_time}" -T "GTFO" -a -c 3600 --no-figlet
+    else
+        termdown "${gtfo_time}" -T "GTFO" -a -c 3600
+    fi
+    zenity --error --text="GTFO"
+}
+
+while [[ $# -ne 0 ]]; do
+    case "${1}" in
+    --)
+        shift
+        ;;
+    -v | --version)
+        print_version
+        exit 0
+        ;;
+    -h | --help)
+        print_usage
+        exit 0
+        ;;
+    --script-status)
+        print_script_status
+        exit 0
+        ;;
+    --text)
+        text="true"
+        shift 1
+        ;;
+    *)
+        shift
+        ;;
+    esac
+done
+
+main "${text}"
