@@ -27,7 +27,7 @@ mendo config --local core.filemode false
 
 Deal with merge conflict. I know it might be.
 
-Now `mendo` is just a alias for this bare Git.
+Now `mendo` is just an alias for this bare Git.
 
 ## Update ##
 
