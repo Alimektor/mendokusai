@@ -15,7 +15,7 @@ SCRIPT_BASENAME=${SCRIPT_PATH##*/}
 
 print_usage() {
     cat <<__USAGE__
-Usage: ${SCRIPT_BASENAME} [-v|--version -h|--help -n|--name <name>]
+Usage: ${SCRIPT_BASENAME} [-v|--version -h|--help |--text]
 
     Calculate when it's time to go home.
 
@@ -37,7 +37,7 @@ __USAGE__
 }
 
 print_version() {
-    echo "${SCRIPT_BASENAME}, 1.0.5"
+    echo "${SCRIPT_BASENAME}, 1.0.7"
 }
 
 print_script_status() {
@@ -65,7 +65,7 @@ main() {
         exit 1
     fi
     if ! command -v zenity >/dev/null; then
-        echo "Install zenity!"
+        echo "Install zenity! For example: # apt-get install -y zenity"
         exit 1
     fi
     if [[ "${text}" == "true" ]]; then
