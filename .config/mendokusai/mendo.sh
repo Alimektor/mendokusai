@@ -2,7 +2,7 @@
 # めんどくさい is a public home (~) config directory with useful configs, scripts, cheat codes, shell libraries for Linux / Git Bash for every day.
 
 mendo() {
-    /usr/bin/git --git-dir="${HOME}/.config/mendokusai/git" --work-tree="${HOME}" "${@}"
+    git --git-dir="${HOME}/.config/mendokusai/git" --work-tree="${HOME}" "${@}"
 }
 
 # Customize PATH
