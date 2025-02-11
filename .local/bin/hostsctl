@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Control manager for hosts file.
-# status: final
 
 # Determine script path
 SCRIPT_PATH="${BASH_SOURCE[0]}"
@@ -80,7 +79,6 @@ Commands:
 Options:
     --version               Print utility version.
     --help                  Print this help message.
-    --script-status         Print script status.
 
 __USAGE__
 }
@@ -153,16 +151,7 @@ if [[ "${system_name}" == "windows" ]]; then
 fi
 
 print_version() {
-    echo "${SCRIPT_BASENAME}, 1.0.8"
-}
-
-print_script_status() {
-    local _script_status
-    _script_status="$(head -n 3 "${SCRIPT_PATH}")"
-    _script_status="$(echo "${_script_status}" | tail -n 1)"
-    # shellcheck disable=SC2001
-    _script_status="$(echo "${_script_status}" | sed 's|^# ||')"
-    echo "${_script_status}"
+    echo "${SCRIPT_BASENAME}, 1.0.9"
 }
 
 if [[ $# -eq 0 ]]; then
@@ -251,10 +240,6 @@ while [[ $# -ne 0 ]]; do
             ;;
         -h | --help)
             print_usage
-            exit 0
-            ;;
-        --script-status)
-            print_script_status
             exit 0
             ;;
         i | init)

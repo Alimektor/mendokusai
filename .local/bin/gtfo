@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Calculate when it's time to go home.
-# status: final
 
 # Determine script path
 SCRIPT_PATH="${BASH_SOURCE[0]}"
@@ -37,16 +36,7 @@ __USAGE__
 }
 
 print_version() {
-    echo "${SCRIPT_BASENAME}, 1.0.8"
-}
-
-print_script_status() {
-    local _script_status
-    _script_status="$(head -n 3 "${SCRIPT_PATH}")"
-    _script_status="$(echo "${_script_status}" | tail -n 1)"
-    # shellcheck disable=SC2001
-    _script_status="$(echo "${_script_status}" | sed 's|^# ||')"
-    echo "${_script_status}"
+    echo "${SCRIPT_BASENAME}, 1.0.9"
 }
 
 main() {
@@ -87,10 +77,6 @@ while [[ $# -ne 0 ]]; do
         ;;
     -h | --help)
         print_usage
-        exit 0
-        ;;
-    --script-status)
-        print_script_status
         exit 0
         ;;
     --text)
