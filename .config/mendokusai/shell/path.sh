@@ -24,3 +24,6 @@ pathadd "${HOME}/.cargo/env"
 
 # Add Snap binaries to the PATH variable.
 pathadd "/var/lib/snapd/snap/bin"
+
+# Add Flutter binaries to the PATH variable.
+pathadd "${HOME}/flutter/bin"
