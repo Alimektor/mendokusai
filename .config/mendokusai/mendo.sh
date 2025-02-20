@@ -6,4 +6,4 @@ mendo() {
 }
 
 # Customize PATH
-[[ -r "${HOME}/.config/mendokusai/path.sh" ]] && . "${HOME}/.config/mendokusai/path.sh"
+[[ -r "${HOME}/.config/mendokusai/shell/path.sh" ]] && . "${HOME}/.config/mendokusai/shell/path.sh"
