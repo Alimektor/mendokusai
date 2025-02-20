@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# めんどくさい is a public home (~) config directory with useful configs, scripts, cheat codes, shell libraries for Linux / Git Bash for every day.
+
+# Determine script path
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+while [[ -L "${SCRIPT_PATH}" ]]; do
+    SCRIPT_DIR="$(cd -P "$(dirname "${SCRIPT_PATH}")" >/dev/null 2>&1 && pwd)"
+    SCRIPT_PATH="$(readlink "${SCRIPT_PATH}")"
+    [[ ${SCRIPT_PATH} != /* ]] && SCRIPT_PATH="${SCRIPT_DIR}/${SCRIPT_PATH}"
+done
+SCRIPT_PATH="$(readlink -f "${SCRIPT_PATH}")"
+SCRIPT_DIR="$(cd -P "$(dirname -- "${SCRIPT_PATH}")" >/dev/null 2>&1 && pwd)"
+SCRIPT_BASENAME=${SCRIPT_PATH##*/}
+
+print_usage() {
+    cat <<__USAGE__
+Usage: ${SCRIPT_BASENAME} [-v|--version -h|--help | <git options>]
+
+    めんどくさい is a public home (~) config directory with useful configs, scripts, cheat codes, shell libraries for Linux / Git Bash for every day.
+
+Example:
+
+    ${SCRIPT_BASENAME}
+
+Options:
+    --version           Print utility version.
+    --help              Print this help message.
+
+__USAGE__
+}
+
+print_version() {
+    echo "${SCRIPT_BASENAME}, 0.1.0"
+}
+
+main() {
+    git --git-dir="${HOME}/.config/mendokusai/git" --work-tree="${HOME}" "${@}"
+}
+
+if [[ $# -eq 0 ]]; then
+    print_usage
+    exit 0
+fi
+
+while [[ $# -ne 0 ]]; do
+    case "${1}" in
+    --)
+        shift
+        ;;
+    -v | --version)
+        print_version
+        exit 0
+        ;;
+    -h | --help)
+        print_usage
+        exit 0
+        ;;
+    --script-status)
+        print_script_status
+        exit 0
+        ;;
+    *)
+        main "${@}"
+        exit 0
+        ;;
+    esac
+done
