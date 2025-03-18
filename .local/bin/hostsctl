@@ -171,7 +171,7 @@ update_command() {
     print_info "Updated hosts file:"
     echo "${hosts_files_content}"
     if [[ "${system_name}" == "windows" ]]; then
-        echo "${hosts_files_content}" > "${HOSTS_FILE}"
+        echo "${hosts_files_content}" >"${HOSTS_FILE}"
     else
         sudo bash -c "echo \"${hosts_files_content}\" > \"${HOSTS_FILE}\""
     fi
@@ -184,7 +184,7 @@ add_command() {
     _name="${2}"
     hosts_files_content="${_ip} ${_name}"
     print_info "Add ${success_color}${hosts_files_content}${info_color} to the ${success_color}${ADDITIONAL_HOSTS_FILE}${info_color} hosts file"
-    echo "${hosts_files_content}" >> "${HOSTS_DIR}/${ADDITIONAL_HOSTS_FILE}"
+    echo "${hosts_files_content}" >>"${HOSTS_DIR}/${ADDITIONAL_HOSTS_FILE}"
     update_command
 }
 
@@ -231,70 +231,70 @@ show_command() {
 
 while [[ $# -ne 0 ]]; do
     case "${1}" in
-        --)
-            shift
-            ;;
-        -v | --version)
-            print_version
+    --)
+        shift
+        ;;
+    -v | --version)
+        print_version
+        exit 0
+        ;;
+    -h | --help)
+        print_usage
+        exit 0
+        ;;
+    i | init)
+        init_command
+        exit 0
+        ;;
+    u | update)
+        update_command
+        exit 0
+        ;;
+    a | add)
+        ip="${2}"
+        name="${3}"
+        if [[ -z "${ip}" || -z "${name}" ]]; then
+            print_fail "Usage: ${SCRIPT_BASENAME} add <ip> <name>"
+        fi
+        add_command "${ip}" "${name}"
+        exit 0
+        ;;
+    r | remove)
+        host="${2}"
+        if [[ -z "${host}" ]]; then
+            print_fail "Usage: ${SCRIPT_BASENAME} remove <host>"
+        fi
+        remove_command "${host}"
+        exit 0
+        ;;
+    e | edit)
+        local_hosts_file="${2}"
+        if [[ -z "${local_hosts_file}" ]]; then
+            edit_command "${ADDITIONAL_HOSTS_FILE}"
             exit 0
-            ;;
-        -h | --help)
-            print_usage
+        fi
+        edit_command "${local_hosts_file}"
+        exit 0
+        ;;
+    l | list)
+        list_command
+        exit 0
+        ;;
+    c | cat)
+        local_hosts_file="${2}"
+        if [[ -z "${local_hosts_file}" ]]; then
+            cat_command "${ADDITIONAL_HOSTS_FILE}"
             exit 0
-            ;;
-        i | init)
-            init_command
-            exit 0
-            ;;
-        u | update)
-            update_command
-            exit 0
-            ;;
-        a | add)
-            ip="${2}"
-            name="${3}"
-            if [[ -z "${ip}" || -z "${name}" ]]; then
-                print_fail "Usage: ${SCRIPT_BASENAME} add <ip> <name>"
-            fi
-            add_command "${ip}" "${name}"
-            exit 0
-            ;;
-        r | remove)
-            host="${2}"
-            if [[ -z "${host}" ]]; then
-                print_fail "Usage: ${SCRIPT_BASENAME} remove <host>"
-            fi
-            remove_command "${host}"
-            exit 0
-            ;;
-        e | edit)
-            local_hosts_file="${2}"
-            if [[ -z "${local_hosts_file}" ]]; then
-                edit_command "${ADDITIONAL_HOSTS_FILE}"
-                exit 0
-            fi
-            edit_command "${local_hosts_file}"
-            exit 0
-            ;;
-        l | list)
-            list_command
-            exit 0
-            ;;
-        c | cat)
-            local_hosts_file="${2}"
-            if [[ -z "${local_hosts_file}" ]]; then
-                cat_command "${ADDITIONAL_HOSTS_FILE}"
-                exit 0
-            fi
-            cat_command "${local_hosts_file}"
-            exit 0
-            ;;
-        s | show)
-            show_command
-            exit 0
-            ;;
-        *)
-            print_fail "Unknown parameter: ${1}"
-            ;;
+        fi
+        cat_command "${local_hosts_file}"
+        exit 0
+        ;;
+    s | show)
+        show_command
+        exit 0
+        ;;
+    *)
+        print_fail "Unknown parameter: ${1}"
+        ;;
     esac
 done

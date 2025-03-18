@@ -14,13 +14,17 @@ SCRIPT_BASENAME=${SCRIPT_PATH##*/}
 
 print_usage() {
     cat <<__USAGE__
-Usage: ${SCRIPT_BASENAME} [-v|--version -h|--help | <git options>]
+Usage: ${SCRIPT_BASENAME} [-v|--version -h|--help | healthcheck | <git options>]
 
     めんどくさい is a public home (~) config directory with useful configs, scripts, cheat codes, shell libraries for Linux / Git Bash for every day.
 
 Example:
 
     ${SCRIPT_BASENAME}
+
+Commands:
+    healthcheck         Run healthcheck for mendo repository
+    <any git command>   Run any git command
 
 Options:
     --version           Print utility version.
@@ -30,16 +34,23 @@ __USAGE__
 }
 
 print_version() {
-    echo "${SCRIPT_BASENAME}, 0.1.0"
+    echo "${SCRIPT_BASENAME}, 0.1.1"
+}
+
+healthcheck() {
+    "${HOME}/.config/mendokusai/healthcheck.sh"
+}
+
+update() {
+    mendo pull
 }
 
 main() {
-    git --git-dir="${HOME}/.config/mendokusai/git" --work-tree="${HOME}" "${@}"
+    git --git-dir="${HOME}/.config/mendokusai-git" --work-tree="${HOME}" "${@}"
 }
 
 if [[ $# -eq 0 ]]; then
     print_usage
-    exit 0
 fi
 
 while [[ $# -ne 0 ]]; do
@@ -55,8 +66,12 @@ while [[ $# -ne 0 ]]; do
         print_usage
         exit 0
         ;;
-    --script-status)
-        print_script_status
+    healthcheck)
+        healthcheck
+        exit 0
+        ;;
+    update)
+        update
         exit 0
         ;;
     *)
