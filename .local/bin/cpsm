@@ -1,0 +1,158 @@
+#!/usr/bin/env -S bash -e
+# Use copier to create configuration from the ~/.config/mendokusai/cpsm folder.
+
+# Determine script path
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+while [[ -L "${SCRIPT_PATH}" ]]; do
+    SCRIPT_DIR="$(cd -P "$(dirname "${SCRIPT_PATH}")" >/dev/null 2>&1 && pwd)"
+    SCRIPT_PATH="$(readlink "${SCRIPT_PATH}")"
+    [[ ${SCRIPT_PATH} != /* ]] && SCRIPT_PATH="${SCRIPT_DIR}/${SCRIPT_PATH}"
+done
+SCRIPT_PATH="$(readlink -f "${SCRIPT_PATH}")"
+SCRIPT_DIR="$(cd -P "$(dirname -- "${SCRIPT_PATH}")" >/dev/null 2>&1 && pwd)"
+SCRIPT_BASENAME=${SCRIPT_PATH##*/}
+
+CPSM_DIR="${HOME}/.config/mendokusai/cpsm"
+
+print_usage() {
+    cat <<__USAGE__
+Usage: ${SCRIPT_BASENAME} [-v|--version -h|--help -d|--data VARIABLE=VALUE]
+
+    Use copier to create configuration from the ${CPSM_DIR} folder.
+
+Example:
+
+    ${SCRIPT_BASENAME} bash-utility ~/bin
+    ${SCRIPT_BASENAME} bash-utility ~/bin -d name=script -d "description=my script"
+
+Arguments:
+    source                  Source folder template from ${CPSM_DIR} to use.
+    destination             Destination folder to create.
+
+Options:
+    --version               Print utility version.
+    --help                  Print this help message.
+    --data VARIABLE=VALUE   Data to pass to the template.
+
+Commands:
+    list                    List available templates.
+__USAGE__
+}
+
+# colors
+export reset_color='\e[0m'
+export info_color='\e[1;34m'
+export warning_color='\e[1;33m'
+export error_color='\e[1;31m'
+export success_color='\e[1;32m'
+
+print_info() {
+    local _message="${1}"
+    echo -e "${info_color:-}[INFO] ${_message:-Info}${reset_color:-}"
+}
+
+print_fail() {
+    local _message="$1"
+    echo -e "${error_color:-}[FAIL] ${_message:-Info}${reset_color:-}" >&2
+    exit 1
+}
+
+print_okay() {
+    local _message="${1}"
+    echo -e "${success_color:-}[OKAY] ${_message:-OK}${reset_color:-}"
+}
+
+print_warn() {
+    local _message="${1}"
+    echo -e "${warning_color:-}[WARN] ${_message:-Warning}${reset_color:-}"
+}
+
+print_version() {
+    echo "${SCRIPT_BASENAME}, 0.1.1"
+}
+
+check_copier() {
+    if ! command -v copier &>/dev/null; then
+        print_fail "Error: copier is not installed. Please install copier: https://github.com/copier-org/copier."
+    fi
+}
+
+list_templates() {
+    ls "${CPSM_DIR}" -1
+}
+
+main() {
+    check_copier
+    local source="${1}"
+    local destination="${2}"
+    shift 2
+    local data=("$@")
+    pass_data=()
+    print_info "Copying configuration from ${warning_color}${CPSM_DIR}/${source}${reset_color} to ${warning_color}${destination}${reset_color}"
+    if [[ -n "${data[*]}" ]]; then
+        for d in "${data[@]}"; do
+            print_info "Using data: ${d}"
+            pass_data=("${pass_data[@]}" "-d" "${d}")
+        done
+        copier copy "${CPSM_DIR}/${source}" "${destination}" "${pass_data[@]}" --trust
+    else
+        copier copy "${CPSM_DIR}/${source}" "${destination}" --trust
+    fi
+    print_info "Configuration created in ${destination}"
+}
+
+if [[ $# -eq 0 ]]; then
+    print_usage
+    exit 0
+fi
+
+data=()
+
+while [[ $# -ne 0 ]]; do
+    case "${1}" in
+    list)
+        print_info "Available templates:"
+        list_templates
+        exit 0
+        ;;
+    --)
+        shift
+        ;;
+    -v | --version)
+        print_version
+        exit 0
+        ;;
+    -h | --help)
+        print_usage
+        exit 0
+        ;;
+    --script-status)
+        print_script_status
+        exit 0
+        ;;
+    -d | --data)
+        data+=("${2}")
+        shift 2
+        ;;
+    *)
+        source="${1}"
+        if [[ ! -d "${CPSM_DIR}/${source}" ]]; then
+            templates="$(set -e; list_templates)"
+            print_fail "Error: ${warning_color}${source}${error_color} does not exist.\nCheck the template name in the ${warning_color}${CPSM_DIR}${error_color} folder.\nAvailable templates:\n${info_color}${templates}"
+        fi
+        destination="${2}"
+        if [[ -z "${destination}" ]]; then
+            destination="${PWD}"
+            print_warn "Using current directory as destination: ${error_color}${destination}${reset_color}"
+        else
+            shift
+        fi
+        if [[ ! -d "${destination}" ]]; then
+            print_fail "Error: destination path ${warning_color}${destination}${error_color} does not exist."
+        fi
+        shift
+        ;;
+    esac
+done
+
+main "${source}" "${destination}" "${data[@]}"
