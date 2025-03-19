@@ -1,0 +1,27 @@
+---
+_subdirectory: copier
+name:
+  type: str
+  help: What is your script name?
+  default: hello
+
+description:
+  type: str
+  help: Description of your script?
+  default: Test Hello World
+
+file_tags:
+  type: str
+  help: Tags for the file separated by commas
+  default: "{{ name }}"
+
+_tasks:
+  - bash ./copier.sh
+  - rm -f copier.sh
+_message_after_copy: |-
+  Bats sample test have been created successfully!
+
+  Next steps:
+
+  $ cd {{ _copier_conf.dst_path }}
+  $ bats .
