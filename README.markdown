@@ -7,37 +7,20 @@
 Just click and copy:
 
 ```bash
-rm -rf "${HOME}/.config/mendokusai" && \
-mkdir -p "${HOME}/.config/mendokusai" && \
-git clone --bare https://github.com/Alimektor/mendokusai.git "${HOME}/.config/mendokusai/git" && \
-alias mendo='git --git-dir=$HOME/.config/mendokusai/git --work-tree=$HOME' && \
-mendo checkout && \
-mendo config --local status.showUntrackedFiles no && \
-mendo config --local core.filemode true && \
-mendo config --local push.default current && \
-echo '[[ -r "${HOME}/.config/mendokusai/mendo.sh" ]] && . "${HOME}/.config/mendokusai/mendo.sh"' >> ${HOME}/.bashrc && \
-echo '[[ -r "${HOME}/.config/mendokusai/mendo.sh" ]] && . "${HOME}/.config/mendokusai/mendo.sh"' >> ${HOME}/.zshrc
+curl -Lks https://raw.githubusercontent.com/Alimektor/mendokusai/refs/heads/main/.config/mendokusai/install/install.sh | /usr/bin/env -S bash -e
 ```
 
-(Additional) For Windows Git Bash change `core.filemode`:
+## Usage ##
 
 ```bash
-mendo config --local core.filemode false
+mendo --help
 ```
 
-Deal with merge conflict. I know it might be.
-
-Now `mendo` is just an alias for this bare Git repository.
-
 ## Update ##
-
-Just use:
 
 ```bash
 mendo pull
 ```
-
-and be happy!
 
 ## Links ##
 
