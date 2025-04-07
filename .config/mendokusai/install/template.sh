@@ -1,3 +1,5 @@
+# shellcheck disable=SC2148
+
 main() {
     mendokusai_os_name=$(
         set -e
