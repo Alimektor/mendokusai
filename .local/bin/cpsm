@@ -1,5 +1,5 @@
 #!/usr/bin/env -S bash -e
-# Use copier to create configuration from the ~/.config/mendokusai/cpsm folder.
+# Use copier to create configuration from the ~/.config/cpsm folder.
 
 # Determine script path
 SCRIPT_PATH="${BASH_SOURCE[0]}"
@@ -68,7 +68,7 @@ print_warn() {
 }
 
 print_version() {
-    echo "${SCRIPT_BASENAME}, 0.1.1"
+    echo "${SCRIPT_BASENAME}, 0.1.2"
 }
 
 check_copier() {
@@ -126,10 +126,6 @@ while [[ $# -ne 0 ]]; do
         print_usage
         exit 0
         ;;
-    --script-status)
-        print_script_status
-        exit 0
-        ;;
     -d | --data)
         data+=("${2}")
         shift 2
@@ -137,7 +133,10 @@ while [[ $# -ne 0 ]]; do
     *)
         source="${1}"
         if [[ ! -d "${CPSM_DIR}/${source}" ]]; then
-            templates="$(set -e; list_templates)"
+            templates="$(
+                set -e
+                list_templates
+            )"
             print_fail "Error: ${warning_color}${source}${error_color} does not exist.\nCheck the template name in the ${warning_color}${CPSM_DIR}${error_color} folder.\nAvailable templates:\n${info_color}${templates}"
         fi
         destination="${2}"

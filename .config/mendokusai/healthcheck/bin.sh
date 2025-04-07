@@ -25,8 +25,8 @@ check_no_script_status() {
 check_shellcheck() {
     # shellcheck disable=SC2312
     for f in $(
-               cd "${HOME}"
-                             mendo ls-files | grep .local/bin/
+        cd "${HOME}"
+        mendo ls-files | grep .local/bin/
     ); do
         script_file="${HOME}/${f}"
         # shellcheck disable=SC2312
