@@ -1,7 +1,7 @@
 #!/usr/bin/env -S bash -e
 # Portable functions library.
 # Copyright (c) 2024 AlimeKtor
-# Version: 1.0.2
+# Version: 1.0.3
 
 export reset_color='\e[0m'
 export info_color='\e[1;34m'
@@ -23,7 +23,6 @@ fi
 get_os() {
     local system_name=""
     # shellcheck disable=SC2034
-    local version="1.0.2"
     if [[ -f /etc/os-release ]]; then
         # shellcheck disable=SC1091
         . /etc/os-release
@@ -103,4 +102,10 @@ print_run() {
     local _command="${1}"
     echo -e "${info_color:-}[RUN] ${success_color:-}$ ${_command}${reset_color:-}"
     eval "${_command}"
+}
+
+print_prompt() {
+    local _variable_name="${1:?Variable name is required}"
+    local _prompt_message="${2:?Prompt message is required}"
+    read -rp "${_prompt_message}" "${_variable_name?}"
 }
