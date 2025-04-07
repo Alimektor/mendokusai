@@ -50,11 +50,11 @@ Usage: ${SCRIPT_BASENAME} [OPTIONS] ["<ip>" "<name>" | "<host>"]
 
     You must have Admin Rights to use this script on Windows (Git Bash).
 
-    Initialize hosts file (cp /etc/hosts to ~/.config/mendokusai/hostsctl/000-hosts and create ~/.config/mendokusai/hostsctl/001-additional):
+    Initialize hosts file (cp /etc/hosts to ~/.config/hostsctl/000-hosts and create ~/.config/hostsctl/001-additional):
 
         $ ${SCRIPT_BASENAME} init
 
-    Update hosts file from the ~/.config/mendokusai/hostsctl/ files (or during edit time):
+    Update hosts file from the ~/.config/hostsctl/ files (or during edit time):
 
         $ ${SCRIPT_BASENAME} update
 
@@ -66,13 +66,13 @@ Example:
 
 Commands:
     init                  Initialize hosts file.
-    update                Update hosts file from the ~/.config/mendokusai/hostsctl/ files.
+    update                Update hosts file from the ~/.config/hostsctl/ files.
     add <ip> <name>       Add host to additional hosts file.
     remove <host>         Remove host from additional hosts file.
     edit [<hosts_file>]   Edit hosts file.
                           Default: 001-additional
-    list                  List hosts file from the ~/.config/mendokusai/hostsctl/ files.
-    cat <hosts_file>      Print hosts file from the ~/.config/mendokusai/hostsctl/ files.
+    list                  List hosts file from the ~/.config/hostsctl/ files.
+    cat <hosts_file>      Print hosts file from the ~/.config/hostsctl/ files.
                           Default: 001-additional
     show                  Show system hosts files.
 
@@ -142,7 +142,7 @@ get_os() {
 
 system_name="$(get_os)"
 HOSTS_FILE="/etc/hosts"
-HOSTS_DIR="${HOME}/.config/mendokusai/hostsctl"
+HOSTS_DIR="${HOME}/.config/hostsctl"
 MAIN_HOSTS_FILE="000-hosts"
 ADDITIONAL_HOSTS_FILE="001-additional"
 
@@ -151,7 +151,7 @@ if [[ "${system_name}" == "windows" ]]; then
 fi
 
 print_version() {
-    echo "${SCRIPT_BASENAME}, 1.0.9"
+    echo "${SCRIPT_BASENAME}, 1.0.10"
 }
 
 if [[ $# -eq 0 ]]; then
