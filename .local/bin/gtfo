@@ -19,7 +19,7 @@ Usage: ${SCRIPT_BASENAME} [-v|--version -h|--help |--text]
     Calculate when it's time to go home.
 
     Default: The timer starts with today's computer startup.
-    This behavior controlled by ~/.config/mendokusai/gtfo/config.ini:
+    This behavior controlled by ~/.config/gtfo/config.ini:
 
     start = 08:00   # Argument for \`journalctl --since=\`.
     work_hours = 12 # Hours in a workday.
@@ -36,15 +36,15 @@ __USAGE__
 }
 
 print_version() {
-    echo "${SCRIPT_BASENAME}, 1.0.9"
+    echo "${SCRIPT_BASENAME}, 1.1.0"
 }
 
 main() {
     local text="${1}"
     # shellcheck disable=SC2312
-    start="$(grep "^start = " "${HOME}/.config/mendokusai/gtfo/config.ini" 2>/dev/null | cut -d'=' -f2 | xargs)"
+    start="$(grep "^start = " "${HOME}/.config/gtfo/config.ini" 2>/dev/null | cut -d'=' -f2 | xargs)"
     # shellcheck disable=SC2312
-    work_hours="$(grep "^work_hours = " "${HOME}/.config/mendokusai/gtfo/config.ini" 2>/dev/null | cut -d'=' -f2 | xargs)"
+    work_hours="$(grep "^work_hours = " "${HOME}/.config/gtfo/config.ini" 2>/dev/null | cut -d'=' -f2 | xargs)"
     # shellcheck disable=SC2155
     local arrival_time="$(journalctl --since="${start:-today}" | head -1 | awk '{print $3}') $(date +"%Z")"
     # shellcheck disable=SC2155
