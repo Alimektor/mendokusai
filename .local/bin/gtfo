@@ -32,15 +32,44 @@ Options:
     --version           Print utility version.
     --help              Print this help message.
     --text              Use text output.
+    --dashboard         Use dashboard output.
 __USAGE__
 }
 
 print_version() {
-    echo "${SCRIPT_BASENAME}, 1.1.0"
+    echo "${SCRIPT_BASENAME}, 1.2.0"
+}
+
+get_gtfo_time() {
+    local target_time="${1:?Target time is required}"
+    current_epoch=$(date +%s)
+    target_epoch=$(date -d "${target_time}" +%s)
+
+    # Корректировка на случай, если время уже прошло сегодня [[7]]
+    if [[ ${target_epoch} -lt ${current_epoch} ]]; then
+        target_epoch=$((target_epoch + 86400))  # Добавляем сутки (24*60*60=86400)
+    fi
+
+    seconds_remaining=$((target_epoch - current_epoch))
+
+    if [[ "${seconds_remaining}" -lt 0 ]]; then
+        echo "Left: already gone!"
+        exit 0
+    fi
+
+    hours=$((seconds_remaining / 3600))
+    minutes=$((seconds_remaining % 3600 / 60))
+    seconds=$((seconds_remaining % 60))
+    hours=$(printf "%02d" "${hours}")
+    minutes=$(printf "%02d" "${minutes}")
+    seconds=$(printf "%02d" "${seconds}")
+
+    echo "Left: ${hours}:${minutes}:${seconds}"
 }
 
 main() {
     local text="${1}"
+    local dashboard="${2}"
     # shellcheck disable=SC2312
     start="$(grep "^start = " "${HOME}/.config/gtfo/config.ini" 2>/dev/null | cut -d'=' -f2 | xargs)"
     # shellcheck disable=SC2312
@@ -49,6 +78,11 @@ main() {
     local arrival_time="$(journalctl --since="${start:-today}" | head -1 | awk '{print $3}') $(date +"%Z")"
     # shellcheck disable=SC2155
     local gtfo_time="$(date -d "${arrival_time} + ${work_hours:-9} hours" +"%H:%M:%S")"
+    if [[ "${dashboard}" == "true" ]]; then
+        echo -e "# GTFO time: ${gtfo_time}\n"
+        get_gtfo_time "${gtfo_time}"
+        exit 0
+    fi
     echo "GTFO time: ${gtfo_time}"
     if ! command -v termdown >/dev/null; then
         echo "Install termdown! For example: $ pip3 install termdown"
@@ -83,10 +117,14 @@ while [[ $# -ne 0 ]]; do
         text="true"
         shift 1
         ;;
+    --dashboard)
+        dashboard="true"
+        shift 1
+        ;;
     *)
         shift
         ;;
     esac
 done
 
-main "${text}"
+main "${text}" "${dashboard}"
