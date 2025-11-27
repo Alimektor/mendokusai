@@ -45,9 +45,10 @@ get_gtfo_time() {
     current_epoch=$(date +%s)
     target_epoch=$(date -d "${target_time}" +%s)
 
-    # Корректировка на случай, если время уже прошло сегодня [[7]]
+    # Adjustment if today’s time has already passed
     if [[ ${target_epoch} -lt ${current_epoch} ]]; then
-        target_epoch=$((target_epoch + 86400))  # Добавляем сутки (24*60*60=86400)
+        # Add one day
+        target_epoch=$((target_epoch + 86400))
     fi
 
     seconds_remaining=$((target_epoch - current_epoch))
